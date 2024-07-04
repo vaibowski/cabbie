@@ -14,8 +14,8 @@ import (
 
 func main() {
 	customerDB := make(map[string]models.Customer)
-	customerRepo := repository.CustomerRepository{Datastore: customerDB}
-	customerService := customer.NewService(customerRepo)
+	customerRepo := repository.CustomerRepository{MapDatastore: customerDB}
+	customerService := customer.NewService(&customerRepo)
 	router := NewRouter(customerService)
 
 	logger.Println("Listening on port 8080")
@@ -28,7 +28,7 @@ func main() {
 	}
 }
 
-func pingHandler(w http.ResponseWriter, r *http.Request) {
+func pingHandler(w http.ResponseWriter, _ *http.Request) {
 	io.WriteString(w, "pong")
 	return
 }

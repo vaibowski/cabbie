@@ -26,8 +26,8 @@ func TestCreateNewCustomer(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			repo := repository.CustomerRepository{Datastore: map[string]models.Customer{}}
-			svc := Service{CustomerRepository: repo}
+			repo := repository.CustomerRepository{MapDatastore: map[string]models.Customer{}}
+			svc := Service{CustomerRepository: &repo}
 			resp, err := svc.CreateNewCustomer(test.customer)
 			assert.NotEmpty(t, resp)
 			assert.NoError(t, err)

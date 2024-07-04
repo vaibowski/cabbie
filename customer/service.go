@@ -9,7 +9,7 @@ import (
 
 type Repository interface {
 	AddCustomer(customer models.Customer) error
-	GetCustomerByID(customerID string) (models.Customer, error)
+	GetCustomerByPhone(customerID string) (models.Customer, error)
 }
 
 type Service struct {

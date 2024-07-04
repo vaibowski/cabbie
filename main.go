@@ -1,19 +1,23 @@
 package main
 
 import (
+	"cabbie/customer"
+	"cabbie/models"
+	"cabbie/repository"
 	"errors"
 	"fmt"
 	"io"
 	logger "log"
 	"net/http"
 	"os"
-
-	"github.com/gorilla/mux"
 )
 
 func main() {
-	router := mux.NewRouter()
-	router.HandleFunc("/ping", pingHandler).Methods("GET")
+	customerDB := make(map[string]models.Customer)
+	customerRepo := repository.CustomerRepository{Datastore: customerDB}
+	customerService := customer.NewService(customerRepo)
+	router := NewRouter(customerService)
+
 	logger.Println("Listening on port 8080")
 	err := http.ListenAndServe(":8080", router)
 	if errors.Is(err, http.ErrServerClosed) {

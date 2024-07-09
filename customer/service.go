@@ -3,6 +3,7 @@ package customer
 import (
 	"cabbie/models"
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 	"log"
 	"time"
 )
@@ -20,7 +21,12 @@ func (service Service) CreateNewCustomer(customer models.Customer) (string, erro
 	customerID := uuid.New().String()
 	customer.CustomerID = customerID
 	customer.CreatedAt = time.Now()
-	err := service.CustomerRepository.AddCustomer(customer)
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(customer.Password), 10)
+	if err != nil {
+		return "", err
+	}
+	customer.Password = string(passwordHash)
+	err = service.CustomerRepository.AddCustomer(customer)
 	if err != nil {
 		return "", err
 	}

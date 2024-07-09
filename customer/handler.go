@@ -4,6 +4,7 @@ import (
 	"cabbie/models"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -43,8 +44,12 @@ func SignUpHandler(service service) http.HandlerFunc {
 		customerID, err := service.CreateNewCustomer(customer)
 		if err != nil {
 			log.Printf("error during signup: %s", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			handleError(w, errors.New("error during signup"))
+			if err.Error() == "customer already exists" {
+				w.WriteHeader(http.StatusConflict)
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+			handleError(w, errors.New(fmt.Sprintf("error during signup: %s", err)))
 			return
 		}
 		handleSuccess(w, customerID)

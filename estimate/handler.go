@@ -31,6 +31,7 @@ func Handler(s service) http.HandlerFunc {
 		if err != nil {
 			log.Printf("failed to serve estimate: %s", err)
 			handleError(w, errors.New("failed to fetch estimate"), http.StatusInternalServerError)
+			return
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(response)

@@ -18,6 +18,8 @@ func NewService() Service {
 
 func (svc Service) ServeEstimate(estimateReq Request) (Response, error) {
 	var prices []Price
+	// simple estimate logic to calculate fare as a multiple of distance, as described by the fare multiplier stored with the service instance
+	// this can be easily extended to be configurable, or an API can be exposed to modify this
 	distance := math.Abs(estimateReq.DropOff.XCoordinate - estimateReq.Pickup.XCoordinate)
 	for serviceType := BIKE; serviceType <= SUV; serviceType++ {
 		prices = append(prices, Price{

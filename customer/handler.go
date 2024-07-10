@@ -21,16 +21,14 @@ func SignUpHandler(service service) http.HandlerFunc {
 		reqBody, err := io.ReadAll(r.Body)
 		if err != nil {
 			log.Printf("error reading request body: %s", err)
-			w.WriteHeader(http.StatusBadRequest)
-			handleError(w, errors.New("error reading request body"))
+			handleError(w, errors.New("error reading request body"), http.StatusBadRequest)
 			return
 		}
 
 		err = json.Unmarshal(reqBody, &signUpRequest)
 		if err != nil {
 			log.Printf("error unmarshalling request body: %s", err)
-			w.WriteHeader(http.StatusBadRequest)
-			handleError(w, errors.New("error unmarshalling request body"))
+			handleError(w, errors.New("error unmarshalling request body"), http.StatusBadRequest)
 			return
 		}
 
@@ -45,15 +43,19 @@ func SignUpHandler(service service) http.HandlerFunc {
 		if err != nil {
 			log.Printf("error during signup: %s", err)
 			if err.Error() == "customer already exists" {
-				w.WriteHeader(http.StatusConflict)
+				handleError(w, errors.New(fmt.Sprintf("error during signup: %s", err)), http.StatusConflict)
 			} else {
-				w.WriteHeader(http.StatusInternalServerError)
+				handleError(w, errors.New(fmt.Sprintf("error during signup: %s", err)), http.StatusInternalServerError)
 			}
-			handleError(w, errors.New(fmt.Sprintf("error during signup: %s", err)))
 			return
 		}
-		handleSuccess(w, customerID)
+		json.NewEncoder(w).Encode(map[string]string{"customerID": customerID})
+		return
 	}
+}
+
+func handleError(w http.ResponseWriter, err error, code int) {
+	http.Error(w, err.Error(), code)
 }
 
 type SignUpRequest struct {
@@ -61,13 +63,4 @@ type SignUpRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	Phone    string `json:"phone"`
-}
-
-func handleError(w http.ResponseWriter, err error) {
-	http.Error(w, err.Error(), http.StatusInternalServerError)
-}
-
-func handleSuccess(w http.ResponseWriter, customerID string) {
-	json.NewEncoder(w).Encode(map[string]string{"id": customerID})
-	return
 }

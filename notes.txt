@@ -1,0 +1,16 @@
+DONE
+
+1. Customer Signup -> Able to create customer
+
+
+
+
+
+
+TO DO
+
+1. Driver Signup
+2. Active Driver Pool
+3. Estimate Service
+4. Order Management Service
+5. Payment Service

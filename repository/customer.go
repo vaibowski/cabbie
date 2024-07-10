@@ -17,6 +17,7 @@ func (r *CustomerRepository) AddCustomer(customer models.Customer) error {
 	return nil
 }
 
+// GetCustomerByPhone to be used later on for login
 func (r *CustomerRepository) GetCustomerByPhone(phone string) (models.Customer, error) {
 	customer, ok := r.MapDatastore[phone]
 	if ok == false {

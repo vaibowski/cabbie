@@ -2,6 +2,7 @@ package main
 
 import (
 	"cabbie/customer"
+	"cabbie/driver"
 	"cabbie/models"
 	"cabbie/repository"
 	"errors"
@@ -14,9 +15,12 @@ import (
 
 func main() {
 	customerDB := make(map[string]models.Customer)
+	driverDB := make(map[string]models.Driver)
 	customerRepo := repository.CustomerRepository{MapDatastore: customerDB}
+	driverRepo := repository.DriverRepository{MapDatastore: driverDB}
 	customerService := customer.NewService(&customerRepo)
-	router := NewRouter(customerService)
+	driverService := driver.NewService(&driverRepo)
+	router := NewRouter(customerService, driverService)
 
 	logger.Println("Listening on port 8080")
 	err := http.ListenAndServe(":8080", router)

@@ -16,7 +16,8 @@ type service interface {
 
 func SignUpHandler(service service) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Println("inside customer signup handler")
+		defer r.Body.Close()
+
 		var signUpRequest SignUpRequest
 		reqBody, err := io.ReadAll(r.Body)
 		if err != nil {

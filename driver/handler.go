@@ -15,6 +15,7 @@ type service interface {
 
 func SignUpHandler(svc service) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		defer r.Body.Close()
 		reqBody, err := io.ReadAll(r.Body)
 		if err != nil {
 			log.Printf("error reading body: %s", err)

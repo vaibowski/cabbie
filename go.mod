@@ -3,6 +3,7 @@ module cabbie
 go 1.22
 
 require (
+	github.com/emirpasic/gods/v2 v2.0.0-alpha
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/mux v1.8.0
 	github.com/stretchr/testify v1.9.0

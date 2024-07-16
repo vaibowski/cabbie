@@ -1,6 +1,7 @@
 package driver
 
 import (
+	"cabbie/estimate"
 	"cabbie/models"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -11,6 +12,10 @@ import (
 type Repository interface {
 	AddDriver(driver models.Driver) error
 	GetDriverByPhone(driverID string) (models.Driver, error)
+}
+
+type allocator interface {
+	AllocateDriver(pickup estimate.Location, serviceType estimate.ServiceTypeEnum) (string, error)
 }
 
 type Service struct {

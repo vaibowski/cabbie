@@ -56,8 +56,9 @@ func handleError(w http.ResponseWriter, err error, code int) {
 }
 
 type SignUpRequest struct {
-	Name     string `json:"name"`
-	Phone    string `json:"phone"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Name        string `json:"name"`
+	Phone       string `json:"phone"`
+	Email       string `json:"email"`
+	ServiceType string `json:"service_type"`
+	Password    string `json:"password"`
 }

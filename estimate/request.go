@@ -1,10 +1,8 @@
 package estimate
 
-type Request struct {
-	Pickup  Location `json:"pickup"`
-	DropOff Location `json:"dropOff"`
-}
+import "cabbie/models"
 
-type Location struct {
-	XCoordinate float64 `json:"xCoordinate"`
+type Request struct {
+	Origin      models.Location `json:"origin"`
+	Destination models.Location `json:"destination"`
 }

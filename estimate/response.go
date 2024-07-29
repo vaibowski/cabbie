@@ -1,20 +1,12 @@
 package estimate
 
+import "cabbie/models"
+
 type Response struct {
 	Prices []Price `json:"prices"`
 }
 
 type Price struct {
-	ServiceType ServiceTypeEnum `json:"serviceType"`
-	Fare        float64         `json:"fare"`
+	ServiceType models.ServiceTypeEnum `json:"serviceType"`
+	Fare        float64                `json:"fare"`
 }
-
-type ServiceTypeEnum int
-
-const (
-	UNKNOWN ServiceTypeEnum = iota
-	BIKE
-	CAR
-	SEDAN
-	SUV
-)

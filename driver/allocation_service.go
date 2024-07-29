@@ -1,7 +1,7 @@
 package driver
 
 import (
-	"cabbie/estimate"
+	"cabbie/models"
 	"errors"
 	"github.com/emirpasic/gods/v2/maps/treemap"
 	"math"
@@ -13,18 +13,13 @@ type AllocationService struct {
 	ActiveDriverPool []*treemap.Map[float64, []string]
 }
 
-func NewAllocationService() AllocationService {
-	var activeDriverPool []*treemap.Map[float64, []string]
-	for i := 0; i <= 4; i++ {
-		m := treemap.New[float64, []string]()
-		activeDriverPool = append(activeDriverPool, m)
-	}
+func NewAllocationService(activeDriverPool []*treemap.Map[float64, []string]) AllocationService {
 	return AllocationService{
 		ActiveDriverPool: activeDriverPool,
 	}
 }
 
-func (svc *AllocationService) AllocateDriver(pickup estimate.Location, serviceType estimate.ServiceTypeEnum) (string, error) {
+func (svc *AllocationService) AllocateDriver(pickup models.Location, serviceType models.ServiceTypeEnum) (string, error) {
 	keys := svc.ActiveDriverPool[serviceType].Keys()
 	size := len(keys)
 	if size == 0 {

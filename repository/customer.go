@@ -16,7 +16,7 @@ func (r *CustomerRepository) AddCustomer(customer models.Customer) error {
 	}
 	r.MapDatastore[customer.Phone] = customer
 	r.MapDatastore[customer.CustomerID] = customer
-	log.Printf("Customers in datastore: %v", r.MapDatastore)
+	log.Printf("All customers in datastore: %v", r.MapDatastore)
 	return nil
 }
 

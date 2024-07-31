@@ -11,6 +11,7 @@ import (
 
 type service interface {
 	CreateNewOrder(order models.Order) (models.Order, error)
+	FetchOrder(orderID string) (models.Order, error)
 }
 
 func CreateOrderHandler(orderService service) http.HandlerFunc {
@@ -38,6 +39,23 @@ func CreateOrderHandler(orderService service) http.HandlerFunc {
 			return
 		}
 		json.NewEncoder(w).Encode(order)
+	}
+}
+
+func GetOrderHandler(orderService service) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		orderID := r.Header.Get("order_id")
+		if orderID == "" {
+			handleError(w, errors.New("missing order_id"), http.StatusBadRequest)
+			return
+		}
+		order, err := orderService.FetchOrder(orderID)
+		if err != nil {
+			handleError(w, err, http.StatusNotFound)
+			return
+		}
+		json.NewEncoder(w).Encode(order)
+		return
 	}
 }
 

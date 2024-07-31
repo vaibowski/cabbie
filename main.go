@@ -34,8 +34,8 @@ func main() {
 	driverService := driver.NewService(&driverRepo)
 	estimateService := estimate.NewService()
 	allocationService := driver.NewAllocationService(activeDriverPool)
-	orderService := order_management.NewService(&orderRepo, allocationService)
-	router := NewRouter(customerService, driverService, estimateService, orderService)
+	orderService := order_management.NewService(&orderRepo, &allocationService)
+	router := NewRouter(customerService, driverService, estimateService, allocationService, orderService)
 
 	logger.Println("Listening on port 8080")
 	err := http.ListenAndServe(":8080", router)

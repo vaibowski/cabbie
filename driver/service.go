@@ -2,6 +2,7 @@ package driver
 
 import (
 	"cabbie/models"
+	"errors"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"log"
@@ -10,7 +11,9 @@ import (
 
 type Repository interface {
 	AddDriver(driver models.Driver) error
-	GetDriverByPhone(driverID string) (models.Driver, error)
+	GetDriverByPhone(phone string) (models.Driver, error)
+	GetDriverByDriverID(driverID string) (models.Driver, error)
+	UpdateDriver(driver models.Driver)
 }
 
 type allocator interface {
@@ -36,6 +39,27 @@ func (service Service) CreateNewDriver(driver models.Driver) (string, error) {
 	}
 	log.Printf("driver successfully created with id %s", driverID)
 	return driverID, nil
+}
+
+func (service Service) FetchDriver(driverID string) (models.Driver, error) {
+	driver, err := service.DriverRepository.GetDriverByDriverID(driverID)
+	if err != nil {
+		log.Printf("driver validation failed for driverID: %s with %s", driverID, err.Error())
+		return models.Driver{}, errors.New("driver validation failed for driverID: " + driverID)
+	} else {
+		return driver, nil
+	}
+}
+
+func (service Service) UpdateDriver(driver models.Driver) error {
+	driver, err := service.DriverRepository.GetDriverByDriverID(driver.DriverID)
+	if err != nil {
+		log.Printf("driver not found for driverID: %s with %s", driver.DriverID, err.Error())
+		return errors.New("driver not found for driverID: " + driver.DriverID)
+	} else {
+		service.DriverRepository.UpdateDriver(driver)
+	}
+	return nil
 }
 
 func NewService(driverRepository Repository) Service {

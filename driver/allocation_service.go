@@ -10,7 +10,7 @@ import (
 )
 
 type AllocationService struct {
-	// we will have 4 maps, each corresponding to a unique service type
+	// we will have 4 maps, each corresponding to a unique driverService type
 	ActiveDriverPool []*treemap.Map[float64, []string]
 }
 

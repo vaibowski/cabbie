@@ -34,3 +34,7 @@ func (r *DriverRepository) GetDriverByDriverID(driverID string) (models.Driver, 
 	}
 	return driver, nil
 }
+
+func (r *DriverRepository) UpdateDriver(driver models.Driver) {
+	r.MapDatastore[driver.DriverID] = driver
+}

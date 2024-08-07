@@ -22,3 +22,8 @@ func (service *MockService) CreateNewDriver(customer models.Driver) (string, err
 	args := service.Called(customer)
 	return args.String(0), args.Error(1)
 }
+
+func (service *MockService) GetAllDrivers() []models.Driver {
+	args := service.Called()
+	return args.Get(0).([]models.Driver)
+}

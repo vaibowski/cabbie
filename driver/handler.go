@@ -14,7 +14,7 @@ type driverService interface {
 	CreateNewDriver(driver models.Driver) (string, error)
 	FetchDriver(driverID string) (models.Driver, error)
 	UpdateDriver(driver models.Driver)
-	//GetAllDrivers() ([]models.Driver, error)
+	GetAllDrivers() []models.Driver
 }
 
 type allocationService interface {
@@ -92,7 +92,7 @@ func SetLocationHandler(driverService driverService, allocationService allocatio
 
 		// unset last location
 		if driver.LastLocation.XCoordinate != -1 {
-			err = allocationService.UnsetLocation(driver.DriverID, driver.ServiceType, request.Location)
+			err = allocationService.UnsetLocation(driver.DriverID, driver.ServiceType, driver.LastLocation)
 			if err != nil {
 				log.Printf("error unsetting last location: %s", err.Error())
 				handleError(w, err, http.StatusInternalServerError)
@@ -110,6 +110,14 @@ func SetLocationHandler(driverService driverService, allocationService allocatio
 		driverService.UpdateDriver(driver)
 
 		json.NewEncoder(w).Encode(map[string]string{"driverID": driver.DriverID, "location": fmt.Sprintf("%f", driver.LastLocation)})
+		return
+	}
+}
+
+func GetAllDriversHandler(svc driverService) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		driverList := svc.GetAllDrivers()
+		json.NewEncoder(w).Encode(driverList)
 		return
 	}
 }

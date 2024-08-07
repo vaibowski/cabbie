@@ -3,9 +3,11 @@ package driver
 import (
 	"cabbie/models"
 	"errors"
+	"fmt"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"log"
+	"slices"
 	"time"
 )
 
@@ -14,6 +16,7 @@ type Repository interface {
 	GetDriverByPhone(phone string) (models.Driver, error)
 	GetDriverByDriverID(driverID string) (models.Driver, error)
 	UpdateDriver(driver models.Driver)
+	GetAllDrivers() map[string]models.Driver
 }
 
 type allocator interface {
@@ -53,6 +56,20 @@ func (service Service) FetchDriver(driverID string) (models.Driver, error) {
 
 func (service Service) UpdateDriver(driver models.Driver) {
 	service.DriverRepository.UpdateDriver(driver)
+}
+
+func (service Service) GetAllDrivers() []models.Driver {
+	var driverList []models.Driver
+	driverMap := service.DriverRepository.GetAllDrivers()
+	var printedDrivers []string
+	fmt.Printf("total number of drivers: %d \n", len(driverMap)/2)
+	for _, driver := range driverMap {
+		if !slices.Contains(printedDrivers, driver.DriverID) {
+			driverList = append(driverList, driver)
+		}
+		printedDrivers = append(printedDrivers, driver.DriverID)
+	}
+	return driverList
 }
 
 func NewService(driverRepository Repository) Service {

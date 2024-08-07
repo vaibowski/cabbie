@@ -19,10 +19,6 @@ type Repository interface {
 	GetAllDrivers() map[string]models.Driver
 }
 
-type allocator interface {
-	AllocateDriver(pickup models.Location, serviceType models.ServiceTypeEnum) (string, error)
-}
-
 type Service struct {
 	DriverRepository Repository
 }

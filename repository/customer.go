@@ -3,7 +3,6 @@ package repository
 import (
 	"cabbie/models"
 	"errors"
-	"log"
 )
 
 type CustomerRepository struct {
@@ -16,7 +15,6 @@ func (r *CustomerRepository) AddCustomer(customer models.Customer) error {
 	}
 	r.MapDatastore[customer.Phone] = customer
 	r.MapDatastore[customer.CustomerID] = customer
-	log.Printf("All customers in datastore: %v", r.MapDatastore)
 	return nil
 }
 

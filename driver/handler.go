@@ -20,6 +20,7 @@ type driverService interface {
 type allocationService interface {
 	SetLocation(driverID string, serviceType models.ServiceTypeEnum, location models.Location)
 	UnsetLocation(driverID string, serviceType models.ServiceTypeEnum, lastLocation models.Location) error
+	GetActiveDriverPool() map[int64]map[float64][]string
 }
 
 func SignUpHandler(svc driverService) http.HandlerFunc {
@@ -120,6 +121,30 @@ func GetAllDriversHandler(svc driverService) http.HandlerFunc {
 		json.NewEncoder(w).Encode(driverList)
 		return
 	}
+}
+
+func GetActiveDriverPoolHandler(svc allocationService) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		activeDriverPool := svc.GetActiveDriverPool()
+		convertedMap := convertMap(activeDriverPool)
+		err := json.NewEncoder(w).Encode(convertedMap)
+		if err != nil {
+			fmt.Printf("error writing response: %s", err.Error())
+		}
+		return
+	}
+}
+
+func convertMap(input map[int64]map[float64][]string) map[int64]map[string][]string {
+	output := make(map[int64]map[string][]string)
+	for outerKey, innerMap := range input {
+		newInnerMap := make(map[string][]string)
+		for innerKey, value := range innerMap {
+			newInnerMap[fmt.Sprintf("%f", innerKey)] = value
+		}
+		output[outerKey] = newInnerMap
+	}
+	return output
 }
 
 func handleError(w http.ResponseWriter, err error, code int) {

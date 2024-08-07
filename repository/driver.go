@@ -3,7 +3,6 @@ package repository
 import (
 	"cabbie/models"
 	"errors"
-	"log"
 )
 
 type DriverRepository struct {
@@ -16,7 +15,6 @@ func (r *DriverRepository) AddDriver(driver models.Driver) error {
 	}
 	r.MapDatastore[driver.Phone] = driver
 	r.MapDatastore[driver.DriverID] = driver
-	log.Printf("All drivers in datastore: %v", r.MapDatastore)
 	return nil
 }
 

@@ -70,6 +70,20 @@ func (svc *AllocationService) UnsetLocation(driverID string, serviceType models.
 	return nil
 }
 
+func (svc *AllocationService) GetActiveDriverPool() map[int64]map[float64][]string {
+	result := make(map[int64]map[float64][]string)
+	for i := 1; i <= 4; i++ {
+		driverPool := svc.ActiveDriverPool[i]
+		locationDriverMap := make(map[float64][]string)
+		for _, location := range driverPool.Keys() {
+			driverList, _ := driverPool.Get(location)
+			locationDriverMap[location] = driverList
+		}
+		result[int64(i)] = locationDriverMap
+	}
+	return result
+}
+
 func NewAllocationService(activeDriverPool []*treemap.Map[float64, []string]) AllocationService {
 	return AllocationService{
 		ActiveDriverPool: activeDriverPool,

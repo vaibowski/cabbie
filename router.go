@@ -26,6 +26,7 @@ func NewRouter(customerService customer.Service, driverService driver.Service, e
 	// driver management APIs
 	router.HandleFunc("/driver/set_location", driver.SetLocationHandler(driverService, &allocationService)).Methods("PUT")
 	router.HandleFunc("/driver/drivers", driver.GetAllDriversHandler(driverService)).Methods("GET")
+	router.HandleFunc("/driver/active_drivers", driver.GetActiveDriverPoolHandler(&allocationService)).Methods("GET")
 
 	return router
 }

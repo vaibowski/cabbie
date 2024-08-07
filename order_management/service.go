@@ -10,6 +10,8 @@ import (
 type Repository interface {
 	CreateNewOrder(order models.Order) error
 	GetOrderByOrderID(orderID string) (models.Order, error)
+	GetAllOrders() map[string]models.Order
+	UpdateOrder(order models.Order)
 }
 
 type allocationService interface {
@@ -32,6 +34,9 @@ func (svc Service) CreateNewOrder(order models.Order) (models.Order, error) {
 		log.Printf("error creating order: %v", err)
 		return models.Order{}, err
 	}
+	log.Printf("created new order: %v", order)
+
+	time.Sleep(20)
 
 	// order has been created, now we will assign a driver
 	driverID, err := svc.AllocationService.AllocateDriver(order.Origin, order.ServiceType)
@@ -40,12 +45,17 @@ func (svc Service) CreateNewOrder(order models.Order) (models.Order, error) {
 		return order, err
 	}
 	order.DriverID = driverID
-	log.Printf("created new order: %v", order)
+	order.Status = models.DRIVER_ASSIGNED
+	svc.OrderRepository.UpdateOrder(order)
 	return models.Order{}, nil
 }
 
 func (svc Service) FetchOrder(orderID string) (models.Order, error) {
 	return svc.OrderRepository.GetOrderByOrderID(orderID)
+}
+
+func (svc Service) FetchAllOrders() map[string]models.Order {
+	return svc.OrderRepository.GetAllOrders()
 }
 
 func NewService(orderRepository Repository, allocationService allocationService) Service {

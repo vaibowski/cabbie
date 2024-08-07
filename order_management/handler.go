@@ -12,6 +12,7 @@ import (
 type service interface {
 	CreateNewOrder(order models.Order) (models.Order, error)
 	FetchOrder(orderID string) (models.Order, error)
+	FetchAllOrders() map[string]models.Order
 }
 
 func CreateOrderHandler(orderService service) http.HandlerFunc {
@@ -55,6 +56,14 @@ func GetOrderHandler(orderService service) http.HandlerFunc {
 			return
 		}
 		json.NewEncoder(w).Encode(order)
+		return
+	}
+}
+
+func GetAllOrdersHandler(orderService service) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		orders := orderService.FetchAllOrders()
+		json.NewEncoder(w).Encode(orders)
 		return
 	}
 }

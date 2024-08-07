@@ -17,11 +17,18 @@ func (r OrderRepository) CreateNewOrder(order models.Order) error {
 	return nil
 }
 
-// GetOrderByOrderID GetOrderByPhone to be used later on for login
+func (r OrderRepository) UpdateOrder(order models.Order) {
+	r.MapDatastore[order.OrderID] = order
+}
+
 func (r OrderRepository) GetOrderByOrderID(phone string) (models.Order, error) {
 	order, ok := r.MapDatastore[phone]
 	if ok == false {
 		return models.Order{}, errors.New("order not found")
 	}
 	return order, nil
+}
+
+func (r OrderRepository) GetAllOrders() map[string]models.Order {
+	return r.MapDatastore
 }

@@ -76,7 +76,7 @@ func initializeCustomers(customerDB map[string]models.Customer) {
 }
 
 func initializeDrivers(driverDB map[string]models.Driver, activeDriverPool []*treemap.Map[float64, []string]) {
-	for i := 0; i < 4; i++ {
+	for i := 1; i <= 4; i++ {
 		driverID := fmt.Sprintf("driver_%d", i)
 		driverName := fmt.Sprintf("driver_%d", i)
 		email := "driveremail@email.com"
@@ -84,13 +84,14 @@ func initializeDrivers(driverDB map[string]models.Driver, activeDriverPool []*tr
 		phone := fmt.Sprintf("phone_%d", i)
 		serviceType := models.ServiceTypeEnum(i)
 		driver := models.Driver{
-			DriverID:    driverID,
-			Name:        driverName,
-			Email:       email,
-			Password:    password,
-			Phone:       phone,
-			ServiceType: serviceType,
-			CreatedAt:   time.Time{},
+			DriverID:     driverID,
+			Name:         driverName,
+			Email:        email,
+			Password:     password,
+			Phone:        phone,
+			ServiceType:  serviceType,
+			LastLocation: models.Location{XCoordinate: float64(i * 10)},
+			CreatedAt:    time.Time{},
 		}
 		driverDB[driverID] = driver
 		driverDB[phone] = driver

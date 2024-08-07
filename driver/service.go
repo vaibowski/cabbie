@@ -51,15 +51,8 @@ func (service Service) FetchDriver(driverID string) (models.Driver, error) {
 	}
 }
 
-func (service Service) UpdateDriver(driver models.Driver) error {
-	driver, err := service.DriverRepository.GetDriverByDriverID(driver.DriverID)
-	if err != nil {
-		log.Printf("driver not found for driverID: %s with %s", driver.DriverID, err.Error())
-		return errors.New("driver not found for driverID: " + driver.DriverID)
-	} else {
-		service.DriverRepository.UpdateDriver(driver)
-	}
-	return nil
+func (service Service) UpdateDriver(driver models.Driver) {
+	service.DriverRepository.UpdateDriver(driver)
 }
 
 func NewService(driverRepository Repository) Service {

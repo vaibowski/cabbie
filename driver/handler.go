@@ -13,7 +13,8 @@ import (
 type driverService interface {
 	CreateNewDriver(driver models.Driver) (string, error)
 	FetchDriver(driverID string) (models.Driver, error)
-	UpdateDriver(driver models.Driver) error
+	UpdateDriver(driver models.Driver)
+	//GetAllDrivers() ([]models.Driver, error)
 }
 
 type allocationService interface {
@@ -30,7 +31,7 @@ func SignUpHandler(svc driverService) http.HandlerFunc {
 			handleError(w, errors.New("error reading request body"), http.StatusBadRequest)
 			return
 		}
-		var signUpRequest SignUpRequest
+		var signUpRequest signUpRequest
 		err = json.Unmarshal(reqBody, &signUpRequest)
 		if err != nil {
 			log.Printf("error unmarshalling body: %s", err)
@@ -38,9 +39,13 @@ func SignUpHandler(svc driverService) http.HandlerFunc {
 			return
 		}
 		driverID, err := svc.CreateNewDriver(models.Driver{
-			Name:     signUpRequest.Name,
-			Phone:    signUpRequest.Phone,
-			Email:    signUpRequest.Email,
+			Name:        signUpRequest.Name,
+			Phone:       signUpRequest.Phone,
+			Email:       signUpRequest.Email,
+			ServiceType: models.ServiceTypeEnum(signUpRequest.ServiceType),
+			LastLocation: models.Location{
+				XCoordinate: -1,
+			},
 			Password: signUpRequest.Password,
 		})
 		if err != nil {
@@ -86,10 +91,13 @@ func SetLocationHandler(driverService driverService, allocationService allocatio
 		}
 
 		// unset last location
-		err = allocationService.UnsetLocation(driver.DriverID, driver.ServiceType, request.Location)
-		if err != nil {
-			log.Printf("error unsetting last location: %s", err.Error())
-			handleError(w, err, http.StatusInternalServerError)
+		if driver.LastLocation.XCoordinate != -1 {
+			err = allocationService.UnsetLocation(driver.DriverID, driver.ServiceType, request.Location)
+			if err != nil {
+				log.Printf("error unsetting last location: %s", err.Error())
+				handleError(w, err, http.StatusInternalServerError)
+				return
+			}
 		}
 
 		// update/set location as per request
@@ -97,13 +105,10 @@ func SetLocationHandler(driverService driverService, allocationService allocatio
 
 		// update driver's last location and update in driver repository
 		driver.LastLocation = request.Location
-		err = driverService.UpdateDriver(driver)
-		if err != nil {
-			// TODO: need to rollback driver set location if update driver fails
-			log.Printf("error updating driver: %s", err.Error())
-			handleError(w, err, http.StatusInternalServerError)
-			return
-		}
+
+		// TODO: need to rollback driver set location if update driver fails
+		driverService.UpdateDriver(driver)
+
 		json.NewEncoder(w).Encode(map[string]string{"driverID": driver.DriverID, "location": fmt.Sprintf("%f", driver.LastLocation)})
 		return
 	}
@@ -113,11 +118,11 @@ func handleError(w http.ResponseWriter, err error, code int) {
 	http.Error(w, err.Error(), code)
 }
 
-type SignUpRequest struct {
+type signUpRequest struct {
 	Name        string `json:"name"`
 	Phone       string `json:"phone"`
 	Email       string `json:"email"`
-	ServiceType string `json:"service_type"`
+	ServiceType int64  `json:"serviceType"`
 	Password    string `json:"password"`
 }
 

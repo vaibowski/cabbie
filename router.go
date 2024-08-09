@@ -24,6 +24,7 @@ func NewRouter(customerService customer.Service, driverService driver.Service, e
 	router.HandleFunc("/transport/get_order", order_management.GetOrderHandler(orderManagementService)).Methods("GET")
 	router.HandleFunc("/transport/orders", order_management.GetAllOrdersHandler(orderManagementService)).Methods("GET")
 	router.HandleFunc("/transport/start_order", order_management.StartOrderHandler(orderManagementService)).Methods("PUT")
+	router.HandleFunc("/transport/complete_order", order_management.CompleteOrderHandler(orderManagementService)).Methods("PUT")
 
 	// driver management APIs
 	router.HandleFunc("/driver/set_location", driver.SetLocationHandler(driverService, &allocationService)).Methods("PUT")

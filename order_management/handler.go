@@ -12,6 +12,7 @@ import (
 type service interface {
 	CreateNewOrder(order models.Order) (models.Order, error)
 	StartOrder(orderID string) (models.Order, error)
+	CompleteOrder(orderID string) (models.Order, error)
 	FetchOrder(orderID string) (models.Order, error)
 	FetchAllOrders() map[string]models.Order
 }
@@ -51,6 +52,21 @@ func StartOrderHandler(orderService service) http.HandlerFunc {
 		order, err := orderService.StartOrder(orderID)
 		if err != nil {
 			log.Printf("error starting order: %v", err)
+			handleError(w, err, http.StatusInternalServerError)
+			return
+		}
+		json.NewEncoder(w).Encode(order)
+		return
+	}
+}
+
+func CompleteOrderHandler(orderService service) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		headers := r.Header
+		orderID := headers.Get("OrderID")
+		order, err := orderService.CompleteOrder(orderID)
+		if err != nil {
+			log.Printf("error completing order: %v", err)
 			handleError(w, err, http.StatusInternalServerError)
 			return
 		}

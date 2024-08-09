@@ -50,6 +50,18 @@ func (svc Service) CreateNewOrder(order models.Order) (models.Order, error) {
 	return order, nil
 }
 
+func (svc Service) StartOrder(orderID string) (models.Order, error) {
+	order, err := svc.OrderRepository.GetOrderByOrderID(orderID)
+	if err != nil {
+		log.Printf("order not found: %v", err)
+		return models.Order{}, err
+	}
+	order.Status = models.RIDE_IN_PROGRESS
+	order.PickupTime = time.Now()
+	svc.OrderRepository.UpdateOrder(order)
+	return order, nil
+}
+
 func (svc Service) FetchOrder(orderID string) (models.Order, error) {
 	return svc.OrderRepository.GetOrderByOrderID(orderID)
 }

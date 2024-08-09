@@ -47,7 +47,7 @@ func (svc Service) CreateNewOrder(order models.Order) (models.Order, error) {
 	order.DriverID = driverID
 	order.Status = models.DRIVER_ASSIGNED
 	svc.OrderRepository.UpdateOrder(order)
-	return models.Order{}, nil
+	return order, nil
 }
 
 func (svc Service) FetchOrder(orderID string) (models.Order, error) {

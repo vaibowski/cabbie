@@ -68,7 +68,7 @@ func initializeCustomers(customerDB map[string]models.Customer) {
 			Email:      email,
 			Password:   password,
 			Phone:      phone,
-			CreatedAt:  time.Time{},
+			CreatedAt:  time.Now(),
 		}
 		customerDB[customerID] = customer
 		customerDB[phone] = customer
@@ -77,25 +77,19 @@ func initializeCustomers(customerDB map[string]models.Customer) {
 
 func initializeDrivers(driverDB map[string]models.Driver, activeDriverPool []*treemap.Map[float64, []string]) {
 	for i := 1; i <= 4; i++ {
-		driverID := fmt.Sprintf("driver_%d", i)
-		driverName := fmt.Sprintf("driver_%d", i)
-		email := "driveremail@email.com"
-		password := "password"
-		phone := fmt.Sprintf("phone_%d", i)
-		serviceType := models.ServiceTypeEnum(i)
 		driver := models.Driver{
-			DriverID:     driverID,
-			Name:         driverName,
-			Email:        email,
-			Password:     password,
-			Phone:        phone,
-			ServiceType:  serviceType,
+			DriverID:     fmt.Sprintf("driver_%d", i),
+			Name:         fmt.Sprintf("driver_%d", i),
+			Email:        "driveremail@email.com",
+			Password:     "password",
+			Phone:        fmt.Sprintf("phone_%d", i),
+			ServiceType:  models.ServiceTypeEnum(i),
 			LastLocation: models.Location{XCoordinate: float64(i * 10)},
-			CreatedAt:    time.Time{},
+			CreatedAt:    time.Now(),
 		}
-		driverDB[driverID] = driver
-		driverDB[phone] = driver
+		driverDB[driver.DriverID] = driver
+		driverDB[driver.Phone] = driver
 
-		activeDriverPool[serviceType].Put(float64(i*10), []string{driverID})
+		activeDriverPool[driver.ServiceType].Put(float64(i*10), []string{driver.DriverID})
 	}
 }

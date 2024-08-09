@@ -44,7 +44,12 @@ func (svc *AllocationService) AllocateDriver(pickup models.Location, serviceType
 	// target location is found, now we will just assign the first driver we find, and remove them from the treemap
 	driverID := driverIDList[0]
 	driverIDList = slices.Delete(driverIDList, 0, 1)
-	svc.ActiveDriverPool[serviceType].Put(targetLocation, driverIDList)
+	if len(driverIDList) == 0 {
+		svc.ActiveDriverPool[serviceType].Remove(targetLocation)
+	} else {
+		svc.ActiveDriverPool[serviceType].Put(targetLocation, driverIDList)
+	}
+
 	return driverID, nil
 }
 

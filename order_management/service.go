@@ -36,7 +36,7 @@ func (svc Service) CreateNewOrder(order models.Order) (models.Order, error) {
 	}
 	log.Printf("created new order: %v", order)
 
-	time.Sleep(20)
+	time.Sleep(20 * time.Second)
 
 	// order has been created, now we will assign a driver
 	driverID, err := svc.AllocationService.AllocateDriver(order.Origin, order.ServiceType)
